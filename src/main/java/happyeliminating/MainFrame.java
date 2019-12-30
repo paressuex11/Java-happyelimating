@@ -2,6 +2,7 @@ package happyeliminating;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Container;
 import java.awt.EventQueue;
 
 import javax.swing.JFrame;
@@ -13,8 +14,12 @@ import javax.swing.JLabel;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 import java.awt.GridLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 
-public class Map2 extends JFrame {
+public class MainFrame extends JFrame {
 
 	private JPanel contentPane;
 	private JTextField txtAaa;
@@ -26,7 +31,7 @@ public class Map2 extends JFrame {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
-					Map2 frame = new Map2();
+					MainFrame frame = new MainFrame();
 					frame.setVisible(true);
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -38,8 +43,8 @@ public class Map2 extends JFrame {
 	/**
 	 * Create the frame.
 	 */
-	public Map2() {
-		setTitle("Map2");
+	public MainFrame() {
+		setTitle("Happy Eliminating");
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 807, 548);
 		contentPane = new JPanel();
@@ -48,9 +53,8 @@ public class Map2 extends JFrame {
 		setContentPane(contentPane);
 		
 		JPanel panel = new JPanel();
-		FlowLayout flowLayout = (FlowLayout) panel.getLayout();
-		flowLayout.setHgap(15);
-		flowLayout.setAlignment(FlowLayout.LEFT);
+
+
 		contentPane.add(panel, BorderLayout.NORTH);
 		
 		JButton btnNewButton = new JButton("开始游戏");
@@ -58,7 +62,17 @@ public class Map2 extends JFrame {
 		
 		JButton btnNewButton_1 = new JButton("结束游戏");
 		panel.add(btnNewButton_1);
-		
+		btnNewButton_1.addActionListener(new ActionListener() {
+			
+			public void actionPerformed(ActionEvent e) {
+				JButton source = (JButton)e.getSource();
+				
+				Container root_panel = source.getParent();
+				
+				System.out.print(root_panel.getComponentCount());
+			}
+		});;
+			
 		JLabel label = new JLabel("\u5206\u6570\uFF1A");
 		panel.add(label);
 		
@@ -68,17 +82,15 @@ public class Map2 extends JFrame {
 		panel.add(txtAaa);
 		txtAaa.setColumns(30);
 		
-		JPanel panel_1 = new JPanel();
+		GameMap panel_1 = new GameMap();
 		contentPane.add(panel_1, BorderLayout.CENTER);
-		panel_1.setLayout(new GridLayout(10, 10, 0, 0));
 		
-		JButton []buttons = new JButton[100];
+		panel_1.RandomColor();
+		panel_1.printMap();
+		panel_1.checkMap();
 		
-		for (int i = 0; i < 100; ++ i) {
-			buttons[i] = new JButton();
-			buttons[i].setBackground(colors[(int) Math.floor(Math.random()*4)]);
-			panel_1.add(buttons[i]);
-		}
+
 	}
+
 
 }
