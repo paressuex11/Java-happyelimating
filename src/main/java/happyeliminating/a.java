@@ -61,19 +61,19 @@ public class a extends JPanel{
 		
 	}
     public static void main(String[] args) throws InterruptedException {
-        // ´´½¨Ïà¿ò
+        // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
         JFrame jFrame = new JFrame();
-        // ´´½¨»­°å
+        // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
         a panel = new a();
         jFrame.setDefaultCloseOperation(jFrame.EXIT_ON_CLOSE);
         
-        //½«»æÓÐÐ¡ÈËÍ¼ÏñµÄ»­°åÇ¶Èëµ½Ïà¿òÖÐ
+        //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ð¡ï¿½ï¿½Í¼ï¿½ï¿½Ä»ï¿½ï¿½ï¿½Ç¶ï¿½ëµ½ï¿½ï¿½ï¿½ï¿½ï¿½
         jFrame.add(panel);
         Container pa =  jFrame.getContentPane();
         System.out.print(pa.getComponent(0));
-        // ÉèÖÃ»­¿ò´óÐ¡£¨¿í¶È£¬¸ß¶È£©£¬Ä¬ÈÏ¶¼Îª0
+        // ï¿½ï¿½ï¿½Ã»ï¿½ï¿½ï¿½ï¿½Ð¡ï¿½ï¿½ï¿½ï¿½È£ï¿½ï¿½ß¶È£ï¿½ï¿½ï¿½Ä¬ï¿½Ï¶ï¿½Îª0
         jFrame.setSize(300, 300);
-        // ½«»­¿òÕ¹Ê¾³öÀ´¡£trueÉèÖÃ¿É¼û£¬Ä¬ÈÏÎªfalseÒþ²Ø
+        // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Õ¹Ê¾ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½trueï¿½ï¿½ï¿½Ã¿É¼ï¿½ï¿½ï¿½Ä¬ï¿½ï¿½Îªfalseï¿½ï¿½ï¿½ï¿½
         jFrame.setVisible(true);
         System.out.print(panel.buttons[0].getSize());
         System.out.print(panel.buttons[0].getX() + "\t" + panel.buttons[1].getX());
