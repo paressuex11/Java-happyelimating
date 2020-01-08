@@ -20,7 +20,7 @@ public class GameFrame extends JFrame {
 
 	private JPanel contentPane;
 	private GameMap map;
-	private JTextField textField;
+	public static JTextField textField;
 	/**
 	 * Launch the application.
 	 */
@@ -345,6 +345,7 @@ class GameMap extends JPanel implements MouseListener, Runnable{
 		}
 		for(Block block : eli_blocks) {
 			elimate(block);
+			GameFrame.textField.setText(Integer.toString((Integer.parseInt(GameFrame.textField.getText()) + 1)));
 		}
 		return temp;
 	}
