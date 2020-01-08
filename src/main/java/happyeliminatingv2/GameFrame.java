@@ -46,7 +46,7 @@ public class GameFrame extends JFrame {
 	public GameFrame() {
 		
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(240,70,1200,947);
+		setBounds(240,70,1000,800);
 		setResizable(false);
 		setTitle("Happy Eliminating");
 		contentPane = new JPanel();
@@ -55,14 +55,14 @@ public class GameFrame extends JFrame {
 		setContentPane(contentPane);
 		
 		JLabel lblNewLabel = new JLabel("Score:");
-		lblNewLabel.setBounds(1012, 13, 67, 18);
+		lblNewLabel.setBounds(832, 13, 58, 18);
 		contentPane.add(lblNewLabel);
 		
 		textField = new JTextField();
 		textField.setEditable(false);
 		textField.setHorizontalAlignment(SwingConstants.RIGHT);
 		textField.setText("0");
-		textField.setBounds(1064, 10, 104, 24);
+		textField.setBounds(894, 10, 86, 24);
 		contentPane.add(textField);
 		textField.setColumns(10);
 		
@@ -84,12 +84,12 @@ class GameMap extends JPanel implements MouseListener{
 	 */
 	private static final long serialVersionUID = 1L;
 	public Block blocks[][];
-	public int height = 10;
-	public int width = 10;
+	public int height = 8;
+	public int width = 8;
 	public GameMap() {
 		this.setLayout(null);
 		setVisible(true);
-		this.setBounds(0, 0, 1000, 915);
+		this.setBounds(0, 0, 800, 760);
 		init();
 	}
 	public void init(int width) {
