@@ -5,6 +5,8 @@ import java.awt.EventQueue;
 import java.awt.Point;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.util.ArrayList;
+import java.util.Stack;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -101,6 +103,8 @@ class GameMap extends JPanel implements MouseListener, Runnable{
 		//默认init
 		int jb_width = this.getSize().width / width;
 		int jb_height = this.getSize().height / height;
+		Block.block_height = jb_height;
+		Block.block_width = jb_width;
 		blocks = new Block[height][width];
 		for (int i = 0; i < height; ++i) {
 			for (int j = 0; j < width; ++j) {
@@ -173,16 +177,15 @@ class GameMap extends JPanel implements MouseListener, Runnable{
 			}
 		}
 	}
-	public void elimate(Block button)  {
-		button.setSize(0,0);
-		repaint();
-	}
+	
 	public boolean checkBlock(int row, int col) {
 		int left_x = col;
 		int right_x = col;
 		int top_y = row;
 		int bottom_y = row;
-
+		
+		
+		
 		while (true) {
 			left_x--;
 			if (left_x == -1 || blocks[row][left_x].colornum != blocks[row][col].colornum) {
@@ -229,15 +232,12 @@ class GameMap extends JPanel implements MouseListener, Runnable{
 		System.out.println(checkBlock(button.row, button.col));
 	}
 	public void mouseEntered(MouseEvent e) {
-		// TODO Auto-generated method stub
 		
 	}
 	public void mouseExited(MouseEvent e) {
-		// TODO Auto-generated method stub
 		
 	}
 	public void mousePressed(MouseEvent e) {
-		// TODO Auto-generated method stub
 		
 	}
 	public void mouseReleased(MouseEvent e) {
@@ -291,25 +291,65 @@ class GameMap extends JPanel implements MouseListener, Runnable{
 		}
 	}
 	public void reorganize() {
-		for(int j = 0; j < width ; ++ j) {
-			for (int i = 0; i < height ; ++ i) {
-				
+		for (int j = 0; j < width ; ++ j) {
+			Stack<Block> temp = new Stack<Block>();
+			Stack<Block> null_temp = new Stack<Block>();
+			for (int i = 0;i < height ;++ i) {
+				if(blocks[i][j].getWidth() != 0) {
+					temp.push(blocks[i][j]);
+				}else {
+					null_temp.push(blocks[i][j]);
+				}
+			}
+			for(int i = height - 1; i >= 0; -- i) {
+				if(!temp.empty()) {
+					exchange(temp.pop(), blocks[i][j]);
+				}
+				else {
+					Block null_tempp = null_temp.pop();
+					exchange(null_tempp, blocks[i][j]);
+					null_tempp.resize();
+					null_tempp.ramdomColor();
+					repaint();
+				}
 			}
 		}
+		
+			
+		
+	}
+	public void setBlockPoint(Block block, int row, int col) {
+		blocks[row][col] = block;
+		block.row = row;
+		block.col = col;
+		block.setLocation(col * Block.block_width,  row * Block.block_height);
+	}
+	public void setNullBlockPoint(Block block, int row, int col) {
+		block.resize();
+		setBlockPoint(block, row, col);
+	}
+	public void elimate(Block button)  {
+		button.setSize(0, 0);
+		repaint();
 	}
 	public boolean checkMap() {
 		boolean temp = false;
+		ArrayList<Block> eli_blocks = new ArrayList<Block>();
 		for (int i = 0; i < height; ++i) {
 			for (int j = 0; j < width; ++j) {
 				if(!checkBlock(i, j)) {
-					elimateAnimate(blocks[i][j]);
+					eli_blocks.add(blocks[i][j]);
 					temp = true;
 				}
 			}
 		}
+		for(Block block : eli_blocks) {
+			elimate(block);
+		}
 		return temp;
 	}
-	private void elimateAnimate(Block block) {
+	//有时间就搞这个
+	public void elimateAnimate(Block block) {
 		while(true) {
 			block.setSize(block.getWidth() - 1, block.getHeight() - 1);
 			try {
@@ -320,7 +360,8 @@ class GameMap extends JPanel implements MouseListener, Runnable{
 			}
 			if(block.getWidth() == 0 || block.getHeight() == 0) {
 				block.setSize(0,0);
-				break;
+				block.colornum = 4;
+				return;
 			}
 		}
 	}
@@ -328,6 +369,8 @@ class GameMap extends JPanel implements MouseListener, Runnable{
 }
 class Block extends JButton{
 	public static Color[] colors = {Color.red, Color.green, Color.blue, Color.yellow, Color.white};
+	public static int block_height;
+	public static int block_width;
 	public int colornum;
 	public int col;
 	public int row;
@@ -343,7 +386,22 @@ class Block extends JButton{
 		else this.colornum = 4;
 		
 	}
+	public Block(int row, int col,  GameMap map) {
+		this.row = row;
+		this.col = col;
+		this.map = map;
+		this.colornum = (int) Math.floor(Math.random() * 4);
+		syncColor();
+		
+	}
+	public void resize() {
+		setSize(block_width, block_height);
+	}
 	public void syncColor() {
 		this.setBackground(colors[colornum]);
+	}
+	public void ramdomColor() {
+		this.colornum = (int) Math.floor(Math.random() * 4);
+		syncColor();
 	}
 }
