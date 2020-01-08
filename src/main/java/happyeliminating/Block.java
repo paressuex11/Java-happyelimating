@@ -3,6 +3,7 @@ package happyeliminating;
 import java.awt.Color;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.awt.event.MouseMotionListener;
 
 import javax.swing.JButton;
 
@@ -26,27 +27,27 @@ public class Block extends JButton implements MouseListener{
 		this.col = col;
 		this.colornum = color;
 	}
+	public Block() {
+		// doing nothing
+	}
 	public void syncColor() {
 		this.setBackground(colors[colornum]);
 	}
-	public void mouseClicked(MouseEvent e) {
-		// TODO Auto-generated method stub
+	public void mouseClicked(MouseEvent arg0) {
 		
 	}
-	public void mouseEntered(MouseEvent e) {
-		// TODO Auto-generated method stub
+	public void mouseEntered(MouseEvent arg0) {
 		
 	}
-	public void mouseExited(MouseEvent e) {
-		// TODO Auto-generated method stub
+	public void mouseExited(MouseEvent arg0) {
 		
 	}
-	public void mousePressed(MouseEvent e) {
-		// TODO Auto-generated method stub
+	public void mousePressed(MouseEvent arg0) {
 		
 	}
-	public void mouseReleased(MouseEvent e) {
-		// TODO Auto-generated method stub
+	public void mouseReleased(MouseEvent arg0) {
 		
 	}
+	
+	
 }
