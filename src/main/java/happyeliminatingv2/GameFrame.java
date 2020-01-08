@@ -2,6 +2,7 @@ package happyeliminatingv2;
 
 import java.awt.Color;
 import java.awt.EventQueue;
+import java.awt.Point;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 
@@ -77,7 +78,7 @@ public class GameFrame extends JFrame {
 	}
 }
 
-class GameMap extends JPanel implements MouseListener{
+class GameMap extends JPanel implements MouseListener, Runnable{
 
 	/**
 	 * 
@@ -91,6 +92,7 @@ class GameMap extends JPanel implements MouseListener{
 		setVisible(true);
 		this.setBounds(0, 0, 800, 760);
 		init();
+		new Thread(this).start();
 	}
 	public void init(int width) {
 		//一般用方矩阵
@@ -110,7 +112,7 @@ class GameMap extends JPanel implements MouseListener{
 		for (int i = 0; i < height; ++i) {
 			for (int j = 0; j < width; ++j) {
 				blocks[i][j].syncColor();
-				blocks[i][j].setBounds(i*jb_width,j*jb_height,jb_width,jb_height);
+				blocks[i][j].setBounds(j*jb_width,i*jb_height,jb_width,jb_height);
 				blocks[i][j].setVisible(true);
 				this.add(blocks[i][j]);
 			}
@@ -171,19 +173,60 @@ class GameMap extends JPanel implements MouseListener{
 			}
 		}
 	}
-	public void elimate(Block button) throws InterruptedException {
-		int height = button.getSize().height;
-		int width = button.getSize().width;
+	public void elimate(Block button)  {
 		button.setSize(0,0);
 		repaint();
 	}
-	public void mouseClicked(MouseEvent e) {
-		try {
-			elimate((Block)e.getSource());
-		} catch (InterruptedException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
+	public boolean checkBlock(int row, int col) {
+		int left_x = col;
+		int right_x = col;
+		int top_y = row;
+		int bottom_y = row;
+
+		while (true) {
+			left_x--;
+			if (left_x == -1 || blocks[row][left_x].colornum != blocks[row][col].colornum) {
+				left_x++;
+				break;
+			}
 		}
+
+		while (true) {
+			right_x++;
+			if (right_x == width || blocks[row][right_x].colornum != blocks[row][col].colornum) {
+				right_x--;
+				break;
+			}
+		}
+
+		while (true) {
+			top_y--;
+			if (top_y == -1 || blocks[top_y][col].colornum != blocks[row][col].colornum) {
+				top_y++;
+				break;
+			}
+		}
+
+		while (true) {
+			bottom_y++;
+			if (bottom_y == height || blocks[bottom_y][col].colornum != blocks[row][col].colornum) {
+				bottom_y--;
+				break;
+			}
+		}
+
+		if (Math.abs(left_x - right_x) >= 2 || Math.abs(top_y - bottom_y) >= 2)
+			return false; // false代表要被消除
+		return true;
+	}
+	
+	public void mouseClicked(MouseEvent e) {
+		Block button = (Block)e.getSource();
+		System.out.println(button.row);
+		System.out.println(button.col);
+		System.out.println(blocks[button.row][button.col].row);
+		System.out.println(blocks[button.row][button.col].col);
+		System.out.println(checkBlock(button.row, button.col));
 	}
 	public void mouseEntered(MouseEvent e) {
 		// TODO Auto-generated method stub
@@ -198,43 +241,90 @@ class GameMap extends JPanel implements MouseListener{
 		
 	}
 	public void mouseReleased(MouseEvent e) {
-		// TODO Auto-generated method stub
-		
-	}
-	public void exchange(JButton button1, JButton button2) throws InterruptedException {
-		int button_1_x = button1.getX();
-		int button_1_y = button1.getY();
+		Block button = (Block) e.getSource();
+		Block button2 = (Block)getComponentAt(e.getX() + button.getX(), e.getY() + button.getY());
+		if (e.getY() <= button.getHeight() && e.getY() >= 0) {
+			if (e.getX() > button.getWidth() && e.getX() < button.getWidth() * 2
+					|| e.getX() < 0 && e.getX() > -1 * button.getWidth()) {
+				exchange(button, button2);
+				button.map.repaint();
+			}
 
-		int button_2_x = button2.getX();
-		int button_2_y = button2.getY();
-
-		int flag_x = button_1_x > button_2_x ? 1 : (button_1_x == button_2_x ? 0 : -1);
-		int flag_y = button_1_y > button_2_y ? 1 : (button_1_y == button_2_y ? 0 : -1);
-		
-		
-		while (true) {
-			if (flag_x == 0) {
-				int button_1_y_ = button1.getY();
-				int button_2_y_ = button2.getY();
-				button1.setLocation(button_1_x, button_1_y_ - flag_y);
-				button2.setLocation(button_2_x, button_2_y_ + flag_y);
-				
-				Thread.sleep(5);
-				if (button1.getY() == button_2_y)
-					break;
-			} else {
-				int button_1_x_ = button1.getX();
-				int button_2_x_ = button2.getX();
-				button1.setLocation(button_1_x_ - flag_x, button_1_y);
-				button2.setLocation(button_2_x_ + flag_x, button_2_y);
+		}
+		else if(e.getX() <= button.getWidth() && e.getX() >= 0) {
+			if (e.getY() > button.getHeight() && e.getY() < button.getHeight() * 2
+					|| e.getY() < 0 && e.getY() > -1 * button.getHeight()) {
+				exchange(button, button2);
 				repaint();
-				Thread.sleep(5);
-				if (button1.getX() == button_2_x)
-					break;
 			}
 		}
-
 	}
+	public void exchange(Block button1, Block button2)   {
+		swap_blocks(button1, button2);
+		swap_rowcol(button1, button2);
+		swap_point(button1, button2);
+	}
+	public void swap_point(Block button1, Block button2) {
+		Point b1_po = button1.getLocation();
+		Point b2_po = button2.getLocation();
+		button1.setLocation(b2_po);
+		button2.setLocation(b1_po);
+	}
+	public void swap_rowcol(Block button1, Block button2) {
+		int b1_row = button1.row;
+		int b1_col = button1.col;
+		button1.row = button2.row;
+		button1.col = button2.col;
+		button2.row = b1_row;
+		button2.col = b1_col; 
+	}
+	public void swap_blocks(Block button1, Block button2) {
+		Block temp = button1;
+		blocks[button1.row][button1.col] = button2;
+		blocks[button2.row][button2.col] = button1;
+	}
+	public void run() {
+		while(true) {
+			if(checkMap()) {
+				reorganize();
+			}
+		}
+	}
+	public void reorganize() {
+		for(int j = 0; j < width ; ++ j) {
+			for (int i = 0; i < height ; ++ i) {
+				
+			}
+		}
+	}
+	public boolean checkMap() {
+		boolean temp = false;
+		for (int i = 0; i < height; ++i) {
+			for (int j = 0; j < width; ++j) {
+				if(!checkBlock(i, j)) {
+					elimateAnimate(blocks[i][j]);
+					temp = true;
+				}
+			}
+		}
+		return temp;
+	}
+	private void elimateAnimate(Block block) {
+		while(true) {
+			block.setSize(block.getWidth() - 1, block.getHeight() - 1);
+			try {
+				Thread.sleep(5);
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			if(block.getWidth() == 0 || block.getHeight() == 0) {
+				block.setSize(0,0);
+				break;
+			}
+		}
+	}
+	
 }
 class Block extends JButton{
 	public static Color[] colors = {Color.red, Color.green, Color.blue, Color.yellow, Color.white};
