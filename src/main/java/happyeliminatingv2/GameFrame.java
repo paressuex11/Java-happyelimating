@@ -304,6 +304,7 @@ class GameMap extends JPanel implements MouseListener, Runnable{
 			for(int i = height - 1; i >= 0; -- i) {
 				if(!temp.empty()) {
 					exchange(temp.pop(), blocks[i][j]);
+					repaint();
 				}
 				else {
 					Block null_tempp = null_temp.pop();
@@ -323,11 +324,9 @@ class GameMap extends JPanel implements MouseListener, Runnable{
 		block.row = row;
 		block.col = col;
 		block.setLocation(col * Block.block_width,  row * Block.block_height);
+		repaint();
 	}
-	public void setNullBlockPoint(Block block, int row, int col) {
-		block.resize();
-		setBlockPoint(block, row, col);
-	}
+	
 	public void elimate(Block button)  {
 		button.setSize(0, 0);
 		repaint();
@@ -340,12 +339,14 @@ class GameMap extends JPanel implements MouseListener, Runnable{
 				if(!checkBlock(i, j)) {
 					eli_blocks.add(blocks[i][j]);
 					temp = true;
+					
 				}
 			}
 		}
 		for(Block block : eli_blocks) {
 			elimate(block);
 			GameFrame.textField.setText(Integer.toString((Integer.parseInt(GameFrame.textField.getText()) + 1)));
+			repaint();
 		}
 		return temp;
 	}
